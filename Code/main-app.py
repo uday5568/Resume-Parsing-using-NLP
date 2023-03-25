@@ -216,21 +216,18 @@ class MainWindow():
                 self.message("*Table Creation Failed, Error Occured", x=signup_x + 200, y=signup_y + 80)
 
             try:
-                if (
-                        username_s.get() and email_s.get() and password_s.get() and password_s.get() == re_password_s.get()):
+                if (username_s.get() and email_s.get() and password_s.get() and password_s.get() == re_password_s.get()):
                     sql = "SELECT username FROM users"
                     db.execute(sql)
                     if str(hashlib.md5(username_s.get().encode()).hexdigest()) in [i[0] for i in db]:
-                        raise Exception('*Username Taken')
+                        self.message('*Username Taken', x=signup_x + 150, y=signup_y+28)
                     else:
                         sql = "INSERT INTO users VALUES(MD5(%s),%s,MD5(%s))"
                         val = (username_s.get(), email_s.get(), password_s.get())
-                        if re.search('[A-Z]', val[1]) and re.search('[a-z]', val[1]) and re.search('[0-9]',
-                                                                                                   val[
-                                                                                                       1]) and re.search(
-                            '[@_!#$%^&*()<>?/\|}{~:]', val[1]) and len(val[1]) >= 8:
+                        if re.search('[A-Z]', val[2]) and re.search('[a-z]', val[2]) and re.search('[0-9]',val[2]) and re.search(
+                            '[@_!#$%^&*()<>?/\|}{~:]', val[2]) and len(val[2]) >= 8:
                             db.execute(sql, val)
-                            self.message("*Registration Successful", x=signup_x + 200, y=signup_y, color='#00ff00')
+                            self.message("*Registration Successful", x=signup_x + 150, y=signup_y + 180, color='#00ff00')
 
 
                         else:
