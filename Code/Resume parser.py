@@ -273,23 +273,6 @@ def extract_github_addresses(string):
     return r.findall(string)[0] if r.findall(string) else ''
 
 
-def data_display():
-    out_data={'Name':extract_name(textinput),
-    'Qualification':extract_education(textinput),
-    'Specialization':extract_branch(textinput),
-    'Skills':extract_skills(textinput),
-    'Mobile Number':extract_mobile_number(textinput),
-    'Email':extract_email_addresses(textinput),
-    'LinkedIn':extract_linkedin_addresses(textinput),
-    'Github':extract_github_addresses(textinput)
-    }
-    json_object = json.dumps(out_data, indent=4)
-    
-    with open(f"output/{re.sub('[^A-Za-z]','',out_data['Name'])}_{skill_set}_result.json", "w") as outfile:
-        outfile.write(json_object)
-        outfile.close()
-    print(json_object)
-    return len(out_data['Skills']),out_data['Email']
 def save_as_docx(path):
     # Opening MS Word
     word = win32.Dispatch("SAPI.SpVoice")
@@ -330,6 +313,28 @@ def sendMails(email_sender='pinnantiuday@gmail.com',email_pass="mzfypoqkatxnqbdc
     print("Mails Successfully Sent")
                 
 
+def data_display():
+    out_data={'Name':extract_name(textinput),
+    'Qualification':extract_education(textinput),
+    'Specialization':extract_branch(textinput),
+    'Skills':extract_skills(textinput),
+    'Mobile Number':extract_mobile_number(textinput),
+    'Email':extract_email_addresses(textinput),
+    'LinkedIn':extract_linkedin_addresses(textinput),
+    'Github':extract_github_addresses(textinput)
+    }
+    json_object = json.dumps(out_data, indent=4)
+    
+    with open(f"output/{re.sub('[^A-Za-z]','',out_data['Name'])}_{skill_set}_result.json", "w") as outfile:
+        outfile.write(json_object)
+        outfile.close()
+    print(json_object)
+    df=pd.read_csv(f"{skill_set}.csv")
+    _score=0
+    _df ={i:j for i,j in zip(df['skill'],df['Score'])}
+    for skill in out_data['Skills']:
+        _score+=_df[skill.lower()]
+    return _score,out_data['Email']
 if __name__ == '__main__': 
     scores={}
     skill_set=input("Enter Domain : ")
@@ -340,13 +345,13 @@ if __name__ == '__main__':
             FilePath='../Resume-Parsing-using-NLP/Resumes/'+file
             if FilePath.endswith('.docx'):
                 textinput = doctotext(FilePath)
-                y=data_display()
-                scores[file]=y
+                score,mail=data_display()
+                scores[file]=[score,mail]
             elif FilePath.endswith('.doc'):
                 save_as_docx(FilePath)
                 textinput = doctotext(FilePath+'x')
-                y=data_display()
-                scores[file]=y
+                score,mail=data_display()
+                scores[file]=[score,mail]
             elif FilePath.endswith('.pdf'):
                 textinput = pdftotext(FilePath)
                 score,mail=data_display()
@@ -363,13 +368,18 @@ if __name__ == '__main__':
     df.to_csv('Ranks.csv',index=False)
     rank_lim=int(input(f'Rank Limit (max : {max(scores.values(),key=lambda x:x[0])[0]}): '))
     mails=[]
+    scs=[]
     for fname in sorted(scores,key=lambda x:scores[x][0],reverse=True):
         if(int(scores[fname][0])>=rank_lim):
             mails.append(scores[fname][1])
+            scs.append(scores[fname][0])
     print("\n".join(mails))
-    xpoints = np.array(df.Email.to_list())
-    ypoints = np.array(df.scores.to_list())
+    xpoints = np.array(mails)
+    ypoints = np.array(scs)
+
+    
 
     plt.bar(xpoints, ypoints)
+    plt.xticks(rotation = 45)
     plt.show()
     #sendMails(email_recevier=mails,skill_set=skill_set)
