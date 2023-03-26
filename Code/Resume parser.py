@@ -261,7 +261,7 @@ def extract_mobile_number(resume_text):
 
 def extract_email_addresses(string):
     r = re.compile(r'[\w\.-]+@[\w\.-]+')
-    return r.findall(string)[0] if r.findall(string) else ''
+    return r.findall(string)[0].replace(".com",".co").replace(".co",".com") if r.findall(string) else ''
 
 
 def extract_linkedin_addresses(string):
@@ -289,7 +289,7 @@ def save_as_docx(path):
     )
     doc.Close(False)
 
-def sendMails(email_sender='pinnantiuday@gmail.com',email_pass="mzfypoqkatxnqbdc",email_recevier=['pinnantiuday@gmail.com'],skill_set='python'):
+def sendMails(email_sender='pinnantiuday@gmail.com',email_pass="bertowprdmrrapyc",email_recevier=['pinnantiuday@gmail.com'],skill_set='python'):
     subject="You have been Shortlisted"
     body=f'''
     Hi, congratulations your resume has been shortlisted for {skill_set} role.
@@ -374,12 +374,12 @@ if __name__ == '__main__':
             mails.append(scores[fname][1])
             scs.append(scores[fname][0])
     print("\n".join(mails))
-    xpoints = np.array(mails)
+
+    xpoints = np.array([i.replace("@gmail.com",'') for i in mails])
     ypoints = np.array(scs)
 
     
 
-    plt.bar(xpoints, ypoints)
-    plt.xticks(rotation = 45)
+    plt.barh(xpoints, ypoints,)
     plt.show()
-    #sendMails(email_recevier=mails,skill_set=skill_set)
+    # sendMails(email_recevier=mails,skill_set=skill_set)
