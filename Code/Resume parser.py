@@ -230,7 +230,6 @@ def extract_skills(resume_text):
     # extract values
     skills = data['skill'].tolist()
     skillset = []
-    print(skills)
     
     # check for one-grams (example: python)
     for token in tokens:
@@ -270,12 +269,6 @@ def extract_github_addresses(string):
     r = re.compile('(?:http[s]?:\/\/)?(?:www\.)?github\.com\/[a-zA-Z0-9_-]{3,100}\/?')
     return r.findall(string)[0] if r.findall(string) else ''
 
-
-
-
- 
-
- 
 
 def data_display():
     out_data={'Name':extract_name(textinput),
@@ -337,11 +330,11 @@ def sendMails(email_sender='pinnantiuday@gmail.com',email_pass="mzfypoqkatxnqbdc
 if __name__ == '__main__': 
     scores={}
     skill_set=input("Enter Domain : ")
-    for file in os.listdir(r'C:\Users\pinna\Jupyter notebooks\Resumes'):
+    for file in os.listdir(r'../Resume-Parsing-using-NLP/Resumes'):
         try:
             # FilePath = input().replace("\'",'').replace('\"','')
             # FilePath=r"C:\Users\pinna\Downloads\SIST-BE-CSE-39110202-ChakaliGangadhar.pdf"
-            FilePath='C:/Users/pinna/Jupyter notebooks/Resumes/'+file
+            FilePath='../Resume-Parsing-using-NLP/Resumes/'+file
             if FilePath.endswith('.docx'):
                 textinput = doctotext(FilePath)
                 y=data_display()
@@ -369,5 +362,5 @@ if __name__ == '__main__':
     for fname in sorted(scores,key=lambda x:scores[x][0],reverse=True):
         if(int(scores[fname][0])>=rank_lim):
             mails.append(scores[fname][1])
-    print(*mails)
+    print("\n".join(mails))
     #sendMails(email_recevier=mails,skill_set=skill_set)
