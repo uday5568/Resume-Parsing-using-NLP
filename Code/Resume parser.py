@@ -39,6 +39,9 @@ from nltk.tag.stanford import StanfordNERTagger
 from spacy.matcher import Matcher
 from nameparser.parser import HumanName
 from nltk.corpus import wordnet
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 
 def doctotext(m):
@@ -352,6 +355,7 @@ if __name__ == '__main__':
                 print("File not support")
         except Exception as e:
             print(e)
+    
     df = pd.DataFrame(columns=["File",'Email','scores'])
  
     for fname in sorted(scores,key=lambda x:scores[x][0],reverse=True):
@@ -363,4 +367,9 @@ if __name__ == '__main__':
         if(int(scores[fname][0])>=rank_lim):
             mails.append(scores[fname][1])
     print("\n".join(mails))
+    xpoints = np.array(df.Email.to_list())
+    ypoints = np.array(df.scores.to_list())
+
+    plt.bar(xpoints, ypoints)
+    plt.show()
     #sendMails(email_recevier=mails,skill_set=skill_set)
