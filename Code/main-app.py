@@ -216,6 +216,7 @@ class MainWindow:
                 self.message("No Folder selected.", x=200, y=200)
             for file in os.listdir(tf):
                 self.gui_elements[-1].insert(END, file+"\n\n")
+            self.gui_elements[-3].insert('', 'end', text="1", values=('1', 'Honda', "yes"))
 
         self.gui_elements.append(
             Button(self.root, text="Select Folder", font=('Arial 12'), fg="#fff", bg="#00f", bd="0",
@@ -244,31 +245,49 @@ class MainWindow:
         self.gui_elements.append(
             Label(self.root, text="Resume Files",fg="#012",bg="#aaa",font=('Arial', 18, "bold"),
                    width=10, height=1))
-        # for i in range(3):
-        #     for j in range(10):
-        #         self.e = Entry(self.root, width=20, fg='blue',
-        #                        font=('Arial', 16, 'bold'))
-        #         self.e.place(x=750+(200*i),y=350+(30*j))
-        #
-        #         # self.e.grid(row=i+50, column=j+50)
-        #         self.e.insert(END, "lst[i][j]")
-        tree = Treeview(self.root, column=("c1", "c2", "c3"), show='headings')
-
-        tree.column("#1", anchor=CENTER)
-
-        tree.heading("#1", text="ID")
-
-        tree.column("#2", anchor=CENTER)
-
-        tree.heading("#2", text="FNAME")
-
-        tree.column("#3", anchor=CENTER)
-
-        tree.heading("#3", text="LNAME")
-
-        tree.pack()
-
         self.gui_elements[-1].place(x=100, y=320)
+        #
+        # self.gui_elements.append( Treeview(self.root, column=("c1", "c2", "c3"),height=20, show='headings',selectmode ='browse'))
+        #
+        # self.gui_elements[-1].column("#1", anchor=CENTER)
+        #
+        # self.gui_elements[-1].heading("#1", text="FileName")
+        #
+        # self.gui_elements[-1].column("#2", anchor=CENTER)
+        #
+        # self.gui_elements[-1].heading("#2", text="Email")
+        #
+        # self.gui_elements[-1].column("#3", anchor=CENTER)
+        #
+        # self.gui_elements[-1].heading("#3", text="Score")
+        #
+        # self.gui_elements[-1].place(x=750,y=350)
+        #
+        # verscrlbar = Scrollbar(self.root,
+        #                            orient="vertical",
+        #                            command=self.gui_elements[-1].yview)
+        #
+        #
+        # verscrlbar.pack(side='right', fill='x')
+        #
+        # # Configuring treeview
+        # self.gui_elements[-1].configure(xscrollcommand=verscrlbar.set)
+        self.gui_elements.append(Treeview(self.root, column=("c1", "c2","c3"), show='headings', height=8, selectmode="browse"))
+        self.gui_elements[-1].column("#1", anchor=CENTER, stretch=NO)
+        self.gui_elements[-1].heading("#1", text="Fname")
+        self.gui_elements[-1].column("#2", anchor=CENTER, stretch=NO)
+        self.gui_elements[-1].heading("#2", text="Lname")
+        self.gui_elements[-1].column("#3", anchor=CENTER, stretch=NO)
+        self.gui_elements[-1].heading("#3", text="Lname")
+
+
+
+
+        self.gui_elements.append(Scrollbar(self.root))
+        self.gui_elements[-1].configure(command=self.gui_elements[-2].yview)
+        self.gui_elements[-2].configure(yscrollcommand=self.gui_elements[-1].set)
+        self.gui_elements[-1].pack(side=RIGHT, fill=BOTH)
+        self.gui_elements[-2].place(x=750,y=350)
         self.gui_elements.append(
             Text(self.root, font=('Arial 12'),
                    width=60, height=22))
