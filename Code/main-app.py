@@ -1,3 +1,6 @@
+import os
+from tkinter.ttk import Treeview
+
 import mysql.connector
 from tkinter import *
 import hashlib
@@ -21,17 +24,16 @@ class MainWindow:
             mydb.commit()
             mydb.close()
         except Exception as e:
-            self.message("*Database Creation Failed",x=620, y=550)
+            self.message("*Database Creation Failed", x=620, y=550)
         finally:
             self.resumeprocesssing()
-
-
 
     def login_gui(self):
         self.root.title('Login Page')
         self.gui_elements_remove(self.gui_elements)
         username_l = StringVar()
         password_l = StringVar()
+
         def fun():
             mydb = mysql.connector.connect(host="localhost", user="root", database='resumesparser')
             db = mydb.cursor()
@@ -41,16 +43,17 @@ class MainWindow:
                 list_db = {}
                 for i in db:
                     list_db[i[0]] = i[2]
-                print(list_db,hashlib.md5(username_l.get().encode()).hexdigest())
+                print(list_db, hashlib.md5(username_l.get().encode()).hexdigest())
                 if list_db.get(hashlib.md5(username_l.get().encode()).hexdigest(), '') == hashlib.md5(
                         password_l.get().encode()).hexdigest():
                     self.resumeprocesssing()
                 else:
-                    self.message("*Incorrect Username or Password",x=650, y=430)
+                    self.message("*Incorrect Username or Password", x=650, y=430)
             except Exception as e:
                 self.message("*Error Encountered", x=650, y=430)
             mydb.commit()
             mydb.close()
+
         login_x = 500
         login_y = 350
         self.gui_elements.append(Label(self.root, text='Resume Parser Using NLP', font=('Arial', 30)))
@@ -82,6 +85,7 @@ class MainWindow:
         self.gui_elements.append(
             Button(self.root, text="Login", font=('Arial 12'), command=fun, width=10, height=1))
         self.gui_elements[-1].place(x=login_x + 200, y=login_y + 110)
+
     def signup_gui(self):
         self.root.title('SignUp Page')
         self.gui_elements_remove(self.gui_elements)
@@ -109,18 +113,21 @@ class MainWindow:
                 self.message("*Table Creation Failed, Error Occured", x=signup_x + 200, y=signup_y + 80)
 
             try:
-                if (username_s.get() and email_s.get() and password_s.get() and password_s.get() == re_password_s.get()):
+                if (
+                        username_s.get() and email_s.get() and password_s.get() and password_s.get() == re_password_s.get()):
                     sql = "SELECT username FROM users"
                     db.execute(sql)
                     if str(hashlib.md5(username_s.get().encode()).hexdigest()) in [i[0] for i in db]:
-                        self.message('*Username Taken', x=signup_x + 150, y=signup_y+28)
+                        self.message('*Username Taken', x=signup_x + 150, y=signup_y + 28)
                     else:
                         sql = "INSERT INTO users VALUES(MD5(%s),%s,MD5(%s))"
                         val = (username_s.get(), email_s.get(), password_s.get())
-                        if re.search('[A-Z]', val[2]) and re.search('[a-z]', val[2]) and re.search('[0-9]',val[2]) and re.search(
-                            '[@_!#$%^&*()<>?/|}{~:]', val[2]) and len(val[2]) >= 8:
+                        if re.search('[A-Z]', val[2]) and re.search('[a-z]', val[2]) and re.search('[0-9]', val[
+                            2]) and re.search(
+                                '[@_!#$%^&*()<>?/|}{~:]', val[2]) and len(val[2]) >= 8:
                             db.execute(sql, val)
-                            self.message("*Registration Successful", x=signup_x + 150, y=signup_y + 177, color='#00ff00')
+                            self.message("*Registration Successful", x=signup_x + 150, y=signup_y + 177,
+                                         color='#00ff00')
 
 
                         else:
@@ -170,7 +177,8 @@ class MainWindow:
         self.gui_elements.append(Entry(self.root, width=25, font=('Arial 16'), textvariable=re_password_s))
         self.gui_elements[-1].place(x=signup_x + 150, y=signup_y + 150)
 
-        self.gui_elements.append(Label(self.root, text="Account Already Exist?", font=('Arial', 13), fg="#fff", bg="#012", width=20))
+        self.gui_elements.append(
+            Label(self.root, text="Account Already Exist?", font=('Arial', 13), fg="#fff", bg="#012", width=20))
         self.gui_elements[-1].place(x=signup_x + 100,
                                     y=signup_y + 253)
 
@@ -183,51 +191,88 @@ class MainWindow:
         self.gui_elements.append(Button(self.root, text="SignUp", font=('Arial 12'), command=fun, width=10, height=1))
         self.gui_elements[-1].place(x=signup_x + 200, y=signup_y + 210)
         self.root.mainloop()
+
     def resumeprocesssing(self):
         self.root.title('Resume Parser')
         self.gui_elements_remove(self.gui_elements)
         self.gui_elements.append(
-            Entry(self.root, font=('Arial', 13), width=50))
-        self.gui_elements[-1].place(x= 100,
+            Entry(self.root, font=('Arial', 13), width=70))
+        self.gui_elements[-1].place(x=100,
                                     y=193)
         self.gui_elements[-1].focus_set()
         self.gui_elements.append(
             Label(self.root, text="Enter Resumes Location", fg="#fff", bg="#012", font=('Arial', 16, "bold"), width=30))
-        self.gui_elements[-1].place(x=150, y=150 )
+        self.gui_elements[-1].place(x=220, y=150)
+
         def fun():
+            tf=None
             try:
                 tf = filedialog.askdirectory(
                     title="Select Folder for Resumes",
                 )
                 self.gui_elements[0].insert(END, tf)
+
             except Exception as e:
-                self.message("No Folder selected.",x=200,y=200)
+                self.message("No Folder selected.", x=200, y=200)
+            for file in os.listdir(tf):
+                self.gui_elements[-1].insert(END, file+"\n\n")
 
         self.gui_elements.append(
             Button(self.root, text="Select Folder", font=('Arial 12'), fg="#fff", bg="#00f", bd="0",
                    command=fun,
                    width=15, height=1))
-        self.gui_elements[-1].place(x= 250, y=230)
+        self.gui_elements[-1].place(x=350, y=230)
 
         self.gui_elements.append(
             Entry(self.root, font=('Arial', 13), width=30))
-        self.gui_elements[-1].place(x=650,
+        self.gui_elements[-1].place(x=800,
                                     y=193)
         self.gui_elements.append(
             Label(self.root, text="Enter Skill Set", fg="#fff", bg="#012", font=('Arial', 16, "bold"), width=20))
-        self.gui_elements[-1].place(x=650, y=150)
+        self.gui_elements[-1].place(x=800, y=150)
         self.gui_elements.append(
             Button(self.root, text="Start Parser", font=('Arial 12'), fg="#fff", bg="#00f", bd="0",
                    command=fun,
                    width=13, height=1))
-        self.gui_elements[-1].place(x=720, y=230)
-
+        self.gui_elements[-1].place(x=870, y=230)
 
         self.gui_elements.append(
             Button(self.root, text="Logout", font=('Arial 12'),
                    command=self.login_gui,
                    width=9, height=1))
         self.gui_elements[-1].place(x=1300, y=50)
+        self.gui_elements.append(
+            Label(self.root, text="Resume Files",fg="#012",bg="#aaa",font=('Arial', 18, "bold"),
+                   width=10, height=1))
+        # for i in range(3):
+        #     for j in range(10):
+        #         self.e = Entry(self.root, width=20, fg='blue',
+        #                        font=('Arial', 16, 'bold'))
+        #         self.e.place(x=750+(200*i),y=350+(30*j))
+        #
+        #         # self.e.grid(row=i+50, column=j+50)
+        #         self.e.insert(END, "lst[i][j]")
+        tree = Treeview(self.root, column=("c1", "c2", "c3"), show='headings')
+
+        tree.column("#1", anchor=CENTER)
+
+        tree.heading("#1", text="ID")
+
+        tree.column("#2", anchor=CENTER)
+
+        tree.heading("#2", text="FNAME")
+
+        tree.column("#3", anchor=CENTER)
+
+        tree.heading("#3", text="LNAME")
+
+        tree.pack()
+
+        self.gui_elements[-1].place(x=100, y=320)
+        self.gui_elements.append(
+            Text(self.root, font=('Arial 12'),
+                   width=60, height=22))
+        self.gui_elements[-1].place(x=100, y=350)
         self.root.mainloop()
 
     def message(self, msg, x=0, y=0, color='#ff0000'):
@@ -239,7 +284,7 @@ class MainWindow:
     def gui_elements_remove(self, elements):
         for element in elements:
             element.destroy()
-        self.gui_elements=[]
+        self.gui_elements = []
 
 
 def main():
