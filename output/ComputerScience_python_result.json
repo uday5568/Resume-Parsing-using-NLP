@@ -1,21 +1,22 @@
 {
     "Name": "Computer Science",
     "Qualification": [
-        "BE",
+        "bachelor",
+        "engineering",
         "Engineering",
-        "Intermediate",
-        "SSC"
+        "12th",
+        "10th"
     ],
     "Specialization": [
-        "Computer",
-        "Communication"
+        "Computer"
     ],
     "Skills": [
-        "Python",
-        "Html"
+        "Css",
+        "Html",
+        "Python"
     ],
-    "Mobile Number": "+91 9 1 0 0 8 4 8 2 6 7",
-    "Email": "santoshpenuboina123@gmail.com",
+    "Mobile Number": "+91 9573712539",
+    "Email": "Jagadeeshpj2001@gmail.com",
     "LinkedIn": "",
     "Github": ""
 }

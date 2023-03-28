@@ -51,30 +51,7 @@ def doctotext(m):
     return (text)
 
 def pdftotext(m):
-    # pdf file object
-    # you can find find the pdf file with complete code in below
-    # pdfFileObj = open(m, 'rb')
 
-    # # pdf reader object
-    # pdfFileReader = PdfReader(pdfFileObj)
-
-    # # number of pages in pdf
-    # num_pages = len(pdfFileReader.pages)
-
-    # currentPageNumber = 0
-    # text = ''
-
-    # # Loop in all the pdf pages.
-    # while(currentPageNumber < num_pages ):
-
-    #     # Get the specified pdf page object.
-    #     pdfPage = pdfFileReader.pages[currentPageNumber]
-
-    #     # Get pdf page text.
-    #     text = text + pdfPage.extract_text()
-
-    #     # Process next page.
-    #     currentPageNumber += 1
     def extract_text_from_pdf(pdf_path):
         with open(pdf_path, 'rb') as fh:
             # iterate over all pages of PDF document
@@ -134,7 +111,7 @@ def extract_name(resume_text):
     # First name and Last name are always Proper Nouns
     pattern = [{'POS': 'PROPN'}, {'POS': 'PROPN'}]
     
-    matcher.add('NAME', None, pattern)
+    matcher.add(key='NAME', patterns=[pattern])
     
     matches = matcher(nlp_text)
     
@@ -161,7 +138,7 @@ def extract_education(resume_text):
     nlp_text = nlp(resume_text)
 
     # Sentence Tokenizer
-    nlp_text = [sent.string.strip() for sent in nlp_text.sents]
+    nlp_text = [sent.text.strip() for sent in nlp_text.sents]
 
     edu = {}
     # Extract education degree
@@ -195,7 +172,7 @@ def extract_branch(resume_text):
     nlp_text = nlp(resume_text)
 
     # Sentence Tokenizer
-    nlp_text = [sent.string.strip() for sent in nlp_text.sents]
+    nlp_text = [sent.text.strip() for sent in nlp_text.sents]
 
     edu = {}
     # Extract education degree
@@ -228,7 +205,8 @@ def extract_skills(resume_text):
     # removing stop words and implementing word tokenization
     tokens = [token.text for token in nlp_text if not token.is_stop]
     # reading the csv file
-    data = pd.read_csv(f'{skill_set}.csv') 
+    data =pd.read_csv(f"C:/Users/ganga/Jupyter Notebook/Resume-Parsing-using-NLP/{skill_set}.csv")
+
     
     # extract values
     skills = data['skill'].tolist()
@@ -325,11 +303,11 @@ def data_display():
     }
     json_object = json.dumps(out_data, indent=4)
     
-    with open(f"output/{re.sub('[^A-Za-z]','',out_data['Name'])}_{skill_set}_result.json", "w") as outfile:
+    with open(f"C:/Users/ganga/Jupyter Notebook/Resume-Parsing-using-NLP/output/{re.sub('[^A-Za-z]','',out_data['Name'])}_{skill_set}_result.json", "w") as outfile:
         outfile.write(json_object)
         outfile.close()
     print(json_object)
-    df=pd.read_csv(f"{skill_set}.csv")
+    df=pd.read_csv(f"C:/Users/ganga/Jupyter Notebook/Resume-Parsing-using-NLP/{skill_set}.csv")
     _score=0
     _df ={i:j for i,j in zip(df['skill'],df['Score'])}
     for skill in out_data['Skills']:
@@ -338,11 +316,11 @@ def data_display():
 if __name__ == '__main__': 
     scores={}
     skill_set=input("Enter Domain : ")
-    for file in os.listdir(r'../Resume-Parsing-using-NLP/Resumes'):
-        try:
+    for file in os.listdir(r'C:/Users/ganga/Jupyter Notebook/Resume-Parsing-using-NLP/Resumes/'):
+         try:
             # FilePath = input().replace("\'",'').replace('\"','')
             # FilePath=r"C:\Users\pinna\Downloads\SIST-BE-CSE-39110202-ChakaliGangadhar.pdf"
-            FilePath='../Resume-Parsing-using-NLP/Resumes/'+file
+            FilePath=r'C:/Users/ganga/Jupyter Notebook/Resume-Parsing-using-NLP/Resumes/'+file
             if FilePath.endswith('.docx'):
                 textinput = doctotext(FilePath)
                 score,mail=data_display()
@@ -358,8 +336,8 @@ if __name__ == '__main__':
                 scores[file]=[score,mail]
             else:
                 print("File not support")
-        except Exception as e:
-            print(e)
+         except Exception as e:
+             print(e)
     
     df = pd.DataFrame(columns=["File",'Email','scores'])
  
